@@ -1,0 +1,86 @@
+<html>
+<body>
+	<canvas id='homework_01' height='600' width='600' style='border:1px solid'>
+	</canvas>
+
+	<script type="text/javascript">
+		let canvas = document.getElementById('homework_01');
+        let ctxEarth = canvas.getContext('2d');
+        let ctxSun = canvas.getContext('2d');
+        let ctxMoon = canvas.getContext('2d');
+
+        function getY(x, centerX, centerY, radius, f = true) {
+        	if (f){
+        		return centerY - Math.sqrt(Math.pow(radius, 2) - Math.pow(x - centerX, 2));
+        	}
+        	return centerY + Math.sqrt(Math.pow(radius, 2) - Math.pow(x - centerX, 2));
+        }
+
+        let currentEarthX = 100;
+        let currentMoonX = currentEarthX;
+        flagEarth = true;
+        flagMoon = true;
+        flagАnimation = true;
+
+        canvas.addEventListener('click', function(event) {
+
+        	flagАnimation = !flagАnimation;
+
+	        let animation = setInterval (function() {
+	        	if  (flagАnimation){
+	        		clearInterval(animation);
+					return;
+	        	}
+
+				ctxEarth.clearRect(0,0,canvas.width, canvas.height);
+				ctxSun.clearRect(0,0,canvas.width, canvas.height);
+				ctxMoon.clearRect(0,0,canvas.width, canvas.height);
+
+				// get X,Y for Earth
+				if (flagEarth) {
+					currentEarthX+=1;
+				}else {
+					currentEarthX-=1;
+				}
+
+				let currentEarthY = getY(currentEarthX, 300, 300, 200, flagEarth);
+				if (currentEarthY - 300 == 0){
+					flagEarth = !flagEarth;
+				}
+
+				// get X,Y for Moon
+				if (flagMoon) {
+					if (flagEarth){
+						currentMoonX+=2;
+					}
+				}else {
+					if (!flagEarth){
+						currentMoonX-=2;
+					}
+				}
+
+				let currentMoonY = getY(currentMoonX, currentEarthX, currentEarthY, 60, flagMoon);
+				if (currentMoonY - currentEarthY == 0){
+					flagMoon = !flagMoon;
+				}
+
+				// draw Sun
+				ctxSun.beginPath();
+				ctxSun.arc(300, 300, 50, 0, (Math.PI / 180 * 360));
+				ctxSun.stroke();
+
+				// draw Earth
+				ctxEarth.beginPath();
+	        	ctxEarth.arc(currentEarthX, currentEarthY, 30, 0, (Math.PI / 180 * 360));
+	        	ctxEarth.stroke();
+
+	        	// draw Moon
+	        	ctxMoon.beginPath();
+	        	ctxMoon.arc(currentMoonX, currentMoonY, 10, 0, (Math.PI / 180 * 360));
+	        	ctxMoon.stroke();
+	        }, 10);
+	    });
+	</script>
+
+</body>
+</html>
